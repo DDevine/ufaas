@@ -6,7 +6,7 @@ from quart import Quart
 
 from ufaas.ufaas import app as myapp
 
-from .tasks import VALID_BASIC_INLINE_TASK_SPEC
+from .task_fixtures import VALID_TASK_BASIC
 
 
 @pytest.fixture
@@ -20,7 +20,7 @@ async def test_parse_task_valid() -> None:
     Test that given a VALID task creation succeeds.
     """
     # Check that entities can be encoded to JSON.
-    assert json.dumps(VALID_BASIC_INLINE_TASK_SPEC)
+    assert json.dumps(VALID_TASK_BASIC)
     return
 
 

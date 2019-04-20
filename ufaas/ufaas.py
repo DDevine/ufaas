@@ -16,8 +16,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from dataclasses import InitVar, field
-from typing import Any, Dict, List, Optional, Tuple, Union
+from dataclasses import field
+from typing import Dict, List, Optional, Tuple, Union
 
 from async_timeout import timeout
 
@@ -104,40 +104,15 @@ class TaskConfig:
 
 @dataclass(config=TaskConfig)  # type: ignore
 class Task:
-    """
-    `resource_init` is used to populate resource_list after validation.
-    """
     task_name: str
     image: str
     pwd: str
     cmd_list: List[str] = field(default_factory=list)
-    resource_init: InitVar[List[Any]] = field(init=False, default=[])
+    # Members in resource_list are mapped to thier types automatically. Magic.
     resource_list: List[ResourceType] = field(default_factory=list)
     is_daemon: bool = False
     ttl: Optional[int] = None
     env: Dict[str, Union[str, int, float]] = field(default_factory=dict)
-
-    def __post_init__(self, resource_init: List[Any]) -> None:
-        """Init is needed because resource_list has to be processed."""
-        for res in resource_init:
-            try:
-                self.resource_list.append(TextResource(**res))
-            except ValidationError:
-                try:
-                    self.resource_list.append(URIResource(**res))
-                except ValidationError:
-                    try:
-                        self.resource_list.append(
-                            GenericMountResource(**res)
-                        )
-                    except ValidationError:
-                        try:
-                            self.resource_list.append(
-                                TmpfsResource(**res)
-                            )
-                        except ValidationError:
-                            # TODO: Probably not the right way to handle this.
-                            continue
 
     @validator('task_name')
     def _task_name(cls, v: str) -> None:  # noqa: N805
