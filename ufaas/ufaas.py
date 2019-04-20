@@ -16,19 +16,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from dataclasses import field
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Optional, Tuple
 
 from async_timeout import timeout
-
-from pydantic import PositiveInt, Required, validator
-from pydantic.dataclasses import dataclass
 
 from quart import Quart
 from quart.typing import ResponseValue
 from quart.views import MethodView
 
-from ufaas.types import NameStr, ResourceType
+# from ufaas.types import Task
 
 app = Quart(__name__)
 BODY_TIMEOUT = 2  # Time limit for the body to be recieved.
@@ -36,30 +32,6 @@ BODY_TIMEOUT = 2  # Time limit for the body to be recieved.
 
 def main() -> None:
     app.run()
-
-
-@dataclass()
-class Task:
-    pwd: str = "."
-    task_name: NameStr = Required
-    image: NameStr = Required
-    cmd_list: List[str] = field(default_factory=list)
-    # Members of resource_list are mapped to their types automatically. Magic.
-    resource_list: List[ResourceType] = field(default_factory=list)
-    is_daemon: bool = False
-    ttl: Optional[PositiveInt] = None
-    env: Dict[str, Union[str, int, float]] = field(default_factory=dict)
-
-    @validator("image")
-    def check_image_name(cls, v: str) -> str:  # noqa: N805
-        if "!" in v:
-            raise ValueError("Name cannot contain '!'")
-        return v
-
-    @validator("task_name")
-    def check_task_name(cls, v: str) -> str:  # noqa: N805
-        v = v.replace(' ', '_')
-        return v
 
 
 @app.route('/', methods=["GET"])

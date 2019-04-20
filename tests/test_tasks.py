@@ -2,17 +2,9 @@ from pydantic import ValidationError
 
 import pytest
 
-from quart import Quart
-
-from ufaas.ufaas import Task
-from ufaas.ufaas import app as myapp
+from ufaas.types import Task
 
 from .task_fixtures import VALID_TASK_BASIC
-
-
-@pytest.fixture
-def app() -> Quart:
-    return myapp
 
 
 @pytest.mark.asyncio
