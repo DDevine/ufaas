@@ -1,6 +1,6 @@
 import json
 
-from lessl.lessl import app as myapp
+from ufaas.ufaas import app as myapp
 
 import pytest
 

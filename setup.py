@@ -21,13 +21,13 @@ INSTALL_REQUIRES = [
 ]
 
 setup(
-    name='lessl',
+    name='microfaas',
     version="0.1.0",
     python_requires='>=3.7.0',
     description="A microservice to provide Functions as a Service (FaaS) with \
        a RESTful API on a small scale with Docker.",
     long_description=long_description,
-    url='https://gitlab.com/DDevine/lessl/',
+    url='https://gitlab.com/DDevine/ufaas/',
     author='Daniel Devine',
     author_email='devine@ddevnet.net',
     classifiers=[
@@ -47,6 +47,6 @@ setup(
         'pytest-asyncio',
     ],
     entry_points={
-        'console_scripts': ['lessl=lessl.lessl:main'],
+        'console_scripts': ['ufaas=ufaas.ufaas:main'],
     },
 )

@@ -1,5 +1,5 @@
 """
-lessl - Less Serverless.
+MicroFaaS - FaaS without the faff.
 Provides functions as a service on a small scale using Docker.
 
 Copyright 2019 Daniel Devine
