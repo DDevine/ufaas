@@ -1,10 +1,10 @@
 import json
 
-from ufaas.ufaas import app as myapp
-
 import pytest
 
 from quart import Quart
+
+from ufaas.ufaas import app as myapp
 
 from .tasks import VALID_BASIC_INLINE_TASK_SPEC
 

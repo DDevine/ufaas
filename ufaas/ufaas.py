@@ -111,7 +111,7 @@ class Task:
     image: str
     pwd: str
     cmd_list: List[str] = field(default_factory=list)
-    resource_init: InitVar[List[Any]] = []
+    resource_init: InitVar[List[Any]] = field(init=False, default=[])
     resource_list: List[ResourceType] = field(default_factory=list)
     is_daemon: bool = False
     ttl: Optional[int] = None
@@ -140,7 +140,7 @@ class Task:
                             continue
 
     @validator('task_name')
-    def validate_task_name(cls, v: str) -> None:  # noqa: N805
+    def _task_name(cls, v: str) -> None:  # noqa: N805
         if len(v) > 127:
             raise ValidationError("`task_name` must not be longer than 127 \
                 chars.")
