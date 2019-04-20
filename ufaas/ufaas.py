@@ -50,10 +50,16 @@ class Task:
     ttl: Optional[PositiveInt] = None
     env: Dict[str, Union[str, int, float]] = field(default_factory=dict)
 
-    @validator('image')
-    def check_task_name(cls, v: str) -> None:  # noqa: N805
+    @validator("image")
+    def check_image_name(cls, v: str) -> str:  # noqa: N805
         if "!" in v:
-            raise ValueError("Should not contain!")
+            raise ValueError("Name cannot contain '!'")
+        return v
+
+    @validator("task_name")
+    def check_task_name(cls, v: str) -> str:  # noqa: N805
+        v = v.replace(' ', '_')
+        return v
 
 
 @app.route('/', methods=["GET"])
