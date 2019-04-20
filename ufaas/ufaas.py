@@ -21,12 +21,14 @@ from typing import Dict, List, Optional, Tuple, Union
 
 from async_timeout import timeout
 
-from pydantic import ValidationError, validator
+from pydantic import PositiveInt, Required, validator
 from pydantic.dataclasses import dataclass
 
 from quart import Quart
 from quart.typing import ResponseValue
 from quart.views import MethodView
+
+from ufaas.types import NameStr, ResourceType
 
 app = Quart(__name__)
 BODY_TIMEOUT = 2  # Time limit for the body to be recieved.
@@ -36,89 +38,22 @@ def main() -> None:
     app.run()
 
 
-@dataclass
-class TextResource:
-    """
-    Resource that is provided as raw text. (eg. a raw Python script).
-    """
-    data: str
-    dest: str
-    content_type: str = "text/plain"
-
-
-@dataclass
-class URIResource:
-    """
-    Resource that is fetched from a URI.
-    """
-    uri: str
-    dest: str
-
-
-@dataclass
-class BindResource:
-    """
-    Resource that is a Docker bind mount
-    """
-    src: str
-    target: str
-    readonly: bool = True
-    propagation: Optional[str] = None
-
-
-@dataclass
-class GenericMountResource:
-    """
-    Resource for specifying a generic Docker mount, takes a string so that
-    complicated mounts such as Volumes with specific drivers can be specified.
-    """
-    mount_csv: str
-
-
-@dataclass
-class TmpfsResource:
-    """
-    Create a tmpfs mount.
-    """
-    dest: str
-    size: Optional[int] = None
-    mode: str = "1777"
-
-
-# Type alias used to accept all the resources for a Task.
-ResourceType = Union[
-    TextResource,
-    URIResource,
-    GenericMountResource,
-    TmpfsResource
-]
-
-
-class TaskConfig:
-    """
-    The InitVar type in `Task` is not supported by Pydantic.
-    `arbitrary_types_allowed` is the workaround.
-    """
-    arbitrary_types_allowed = True
-
-
-@dataclass(config=TaskConfig)  # type: ignore
+@dataclass()
 class Task:
-    task_name: str
-    image: str
-    pwd: str
+    pwd: str = "."
+    task_name: NameStr = Required
+    image: NameStr = Required
     cmd_list: List[str] = field(default_factory=list)
-    # Members in resource_list are mapped to thier types automatically. Magic.
+    # Members of resource_list are mapped to their types automatically. Magic.
     resource_list: List[ResourceType] = field(default_factory=list)
     is_daemon: bool = False
-    ttl: Optional[int] = None
+    ttl: Optional[PositiveInt] = None
     env: Dict[str, Union[str, int, float]] = field(default_factory=dict)
 
-    @validator('task_name')
-    def _task_name(cls, v: str) -> None:  # noqa: N805
-        if len(v) > 127:
-            raise ValidationError("`task_name` must not be longer than 127 \
-                chars.")
+    @validator('image')
+    def check_task_name(cls, v: str) -> None:  # noqa: N805
+        if "!" in v:
+            raise ValueError("Should not contain!")
 
 
 @app.route('/', methods=["GET"])
