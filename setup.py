@@ -14,10 +14,10 @@ with open(os.path.join(PROJECT_ROOT, 'README.rst')) as file_:
     long_description = file_.read()
 
 INSTALL_REQUIRES = [
-    'Quart==0.8.1',
+    'Quart==0.9.0',
     'docker==3.7.2',
     'async_timeout==3.0.1',
-    'pydantic@https://github.com/samuelcolvin/pydantic/archive/master.zip'
+    'pydantic==0.24'
 ]
 
 setup(

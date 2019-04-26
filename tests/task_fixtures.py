@@ -12,6 +12,7 @@ VALID_TASK_BASIC = {
         },
     ],
     "is_daemon": False,
+    "rm": False,
     "ttl": 60,
     "env": {
        "FOO": "bar"
